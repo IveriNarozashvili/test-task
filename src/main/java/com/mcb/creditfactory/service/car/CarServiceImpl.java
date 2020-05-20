@@ -11,15 +11,19 @@ import java.util.Optional;
 
 @Service
 public class CarServiceImpl implements CarService {
-    @Autowired
-    private ExternalApproveService approveService;
+
+    private final ExternalApproveService approveService;
+    private final CarRepository carRepository;
 
     @Autowired
-    private CarRepository carRepository;
+    public CarServiceImpl(ExternalApproveService approveService, CarRepository carRepository) {
+        this.approveService = approveService;
+        this.carRepository = carRepository;
+    }
 
     @Override
-    public boolean approve(CarDto dto) {
-        return approveService.approve(new CarAdapter(dto)) == 0;
+    public boolean approve(CarDto carDto) {
+        return approveService.approve(new CarAdapter(carDto)) == 0;
     }
 
     @Override
@@ -33,14 +37,14 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Car fromDto(CarDto dto) {
+    public Car fromDto(CarDto carDto) {
         return new Car(
-                dto.getId(),
-                dto.getBrand(),
-                dto.getModel(),
-                dto.getPower(),
-                dto.getYear(),
-                dto.getValue()
+                carDto.getId(),
+                carDto.getBrand(),
+                carDto.getModel(),
+                carDto.getPower(),
+                carDto.getYear(),
+                carDto.getEvaluations()
         );
     }
 
@@ -52,12 +56,11 @@ public class CarServiceImpl implements CarService {
                 car.getModel(),
                 car.getPower(),
                 car.getYear(),
-                car.getValue()
+                car.getEvaluations()
         );
     }
 
     @Override
     public Long getId(Car car) {
         return car.getId();
-    }
-}
+    }}

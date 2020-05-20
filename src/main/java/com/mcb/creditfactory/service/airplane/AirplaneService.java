@@ -8,10 +8,10 @@ import com.mcb.creditfactory.model.Airplane;
 import java.util.Optional;
 
 public interface AirplaneService {
-    boolean approve(AirplaneDto dto);
+    boolean approve(AirplaneDto airplaneDtodto);
     Airplane save(Airplane airplane);
     Optional<Airplane> load(Long id);
-    Airplane fromDto(AirplaneDto dto);
+    Airplane fromDto(AirplaneDto airplaneDto);
     AirplaneDto toDTO(Airplane airplane);
     Long getId(Airplane airplane);
 }

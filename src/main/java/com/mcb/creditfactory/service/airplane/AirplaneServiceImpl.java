@@ -4,20 +4,22 @@ import com.mcb.creditfactory.dto.AirplaneDto;
 import com.mcb.creditfactory.external.ExternalApproveService;
 import com.mcb.creditfactory.model.Airplane;
 import com.mcb.creditfactory.repository.AirplaneRepository;
-import com.mcb.creditfactory.service.car.CarAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Optional;
 
 public class AirplaneServiceImpl implements AirplaneService {
-    @Autowired
-    private ExternalApproveService approveService;
+    private final ExternalApproveService approveService;
+    private final AirplaneRepository airplaneRepository;
 
     @Autowired
-    private AirplaneRepository airplaneRepository;
+    public AirplaneServiceImpl(ExternalApproveService approveService, AirplaneRepository airplaneRepository) {
+        this.approveService = approveService;
+        this.airplaneRepository = airplaneRepository;
+    }
 
     @Override
-    public boolean approve(AirplaneDto dto) {
-        return approveService.approve(new AirplaneAdapter() == 0;
+    public boolean approve(AirplaneDto airplaneDto) {
+        return approveService.approve(new AirplaneAdapter(airplaneDto)) == 0;
     }
 
     @Override
@@ -27,19 +29,20 @@ public class AirplaneServiceImpl implements AirplaneService {
 
     @Override
     public Optional<Airplane> load(Long id) {
-        return AirplaneRepository.findById(id);
+        return airplaneRepository.findById(id);
     }
 
     @Override
-    public Airplane fromDto(AirplaneDto dto) {
+    public Airplane fromDto(AirplaneDto airplaneDto) {
         return new Airplane(
-                dto.getId(),
-                dto.getBrand(),
-                dto.getModel(),
-                dto.getManufactures(),
-                dto.getYear(),
-                dto.getFuelCapacity(),
-                dto.getSeats()
+                airplaneDto.getId(),
+                airplaneDto.getBrand(),
+                airplaneDto.getModel(),
+                airplaneDto.getManufactures(),
+                airplaneDto.getYear(),
+                airplaneDto.getFuelCapacity(),
+                airplaneDto.getSeats(),
+                airplaneDto.getEvaluations()
         );
     }
 
@@ -52,7 +55,8 @@ public class AirplaneServiceImpl implements AirplaneService {
                 airplane.getManufacturer(),
                 airplane.getYear(),
                 airplane.getFuelCapacity(),
-                airplane.getSeats()
+                airplane.getSeats(),
+                airplane.getEvaluations()
         );
     }
 

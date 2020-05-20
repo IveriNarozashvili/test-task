@@ -10,44 +10,63 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-// TODO: reimplement this
 
 @Service
 public class CollateralService {
-    @Autowired
-    private CarService carService;
-    @Autowired
-    private AirplaneService airplaneService;
+    private final CarService carService;
+    private final AirplaneService airplaneService;
 
-    @SuppressWarnings("ConstantConditions")
+    @Autowired
+    public CollateralService(CarService carService, AirplaneService airplaneService) {
+        this.carService = carService;
+        this.airplaneService = airplaneService;
+    }
+
     public Long saveCollateral(Collateral object) {
-        if (!(object instanceof CarDto )) {   // переписать тут все
+        if (object instanceof CarDto) {
+            CarDto car = (CarDto) object;
+            boolean approved = carService.approve(car);
+
+            return !approved ? null : Optional.of(car)
+                    .map(carService::fromDto)
+                    .map(carService::save)
+                    .map(carService::getId)
+                    .orElse(null);
+        }
+        else if(object instanceof AirplaneDto) {
+            AirplaneDto airplane = (AirplaneDto) object;
+            boolean approved = airplaneService.approve(airplane);
+
+            return !approved ? null : Optional.of(airplane)
+                    .map(airplaneService::fromDto)
+                    .map(airplaneService::save)
+                    .map(airplaneService::getId)
+                    .orElse(null);
+        }
+        else {
             throw new IllegalArgumentException();
         }
-
-        CarDto car = (CarDto) object;
-        boolean approved = carService.approve(car);
-        if (!approved) {
-            return null;
-        }
-
-        return Optional.of(car)
-                .map(carService::fromDto)
-                .map(carService::save)
-                .map(carService::getId)
-                .orElse(null);
     }
 
     public Collateral getInfo(Collateral object) {
-        if (!(object instanceof CarDto)) {
+        if (object instanceof CarDto) {
+            return Optional.of((CarDto) object)
+                    .map(carService::fromDto)
+                    .map(carService::getId)
+                    .flatMap(carService::load)
+                    .map(carService::toDTO)
+                    .orElse(null);
+        }
+        else if (object instanceof AirplaneDto) {
+            return Optional.of((AirplaneDto) object)
+                    .map(airplaneService::fromDto)
+                    .map(airplaneService::getId)
+                    .flatMap(airplaneService::load)
+                    .map(airplaneService::toDTO)
+                    .orElse(null);
+        }
+        else {
             throw new IllegalArgumentException();
         }
-
-        return Optional.of((CarDto) object)
-                .map(carService::fromDto)
-                .map(carService::getId)
-                .flatMap(carService::load)
-                .map(carService::toDTO)
-                .orElse(null);
     }
 }

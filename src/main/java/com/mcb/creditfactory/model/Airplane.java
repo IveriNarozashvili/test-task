@@ -1,13 +1,14 @@
 package com.mcb.creditfactory.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 
 
 @Data
+@ToString(of = {"id", "brand", "model", "manufacturer", "year", "fuelCapacity", "seats", "evaluations"})
+@EqualsAndHashCode(of = {"id", "brand", "model", "manufacturer", "year", "fuelCapacity", "seats", "evaluations"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -25,4 +26,7 @@ public class Airplane {
 
     private int fuelCapacity;
     private int seats;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Evaluation> evaluations;
 }
